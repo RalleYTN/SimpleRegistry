@@ -24,6 +24,7 @@
 
 package de.ralleytn.simple.registry;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,10 +32,10 @@ import java.util.List;
 /**
  * Represents a key in the registry.
  * @author Ralph Niemitz/RalleYTN(ralph.niemitz@gmx.de)
- * @version 1.0.0
+ * @version 1.1.0
  * @since 1.0.0
  */
-public final class Key {
+public final class Key implements Reloadable {
 
 	private List<String> childs;
 	private String parent;
@@ -54,11 +55,64 @@ public final class Key {
 	}
 	
 	/**
+	 * Deletes the value with the specified name.
+	 * @param name name of the value you wish to delete
+	 * @throws IOException if an error occurs
+	 * @since 1.1.0
+	 */
+	public final void deleteValue(String name) throws IOException {
+		
+		Registry.deleteValue(this.path, name);
+	}
+	
+	/**
+	 * Deletes the default value.
+	 * @throws IOException if an error occurs
+	 * @since 1.1.0
+	 */
+	public final void deleteDefaultValue() throws IOException {
+		
+		Registry.deleteDefaultValue(this.path);
+	}
+	
+	/**
+	 * Deletes all values.
+	 * @throws IOException if an error occurs
+	 * @since 1.1.0
+	 */
+	public final void deleteAllValues() throws IOException {
+		
+		Registry.deleteAllValues(this.path);
+	}
+	
+	/**
+	 * Exports the key to the specified file.
+	 * @param exportFile target of the export
+	 * @throws IOException if an error occurs
+	 * @since 1.1.0
+	 */
+	public final void export(File exportFile) throws IOException {
+		
+		Registry.exportKey(this.path, exportFile);
+	}
+	
+	/**
+	 * Deletes the key.
+	 * @throws IOException if an error occurs
+	 * @since 1.1.0
+	 */
+	public final void delete() throws IOException {
+		
+		Registry.deleteKey(this.path);
+	}
+	
+	/**
 	 * Reloads the key. Should be called after setting or deleting values.
 	 * @throws IOException if an error occurs
 	 * @since 1.0.0
 	 */
-	public void reload() throws IOException {
+	@Override
+	public final void reload() throws IOException {
 		
 		Key key = Registry.getKey(this.path);
 		
@@ -78,9 +132,9 @@ public final class Key {
 	 * @throws IOException if an error occurs
 	 * @since 1.0.0
 	 */
-	public void setDefaultValue(Value.Type type, char seperator, String rawValue) throws IOException {
+	public final void setDefaultValue(Value.Type type, char seperator, String rawValue) throws IOException {
 		
-		Registry.exec("reg add \"" + path + "\" /ve /t " + type.name() + (type == Value.Type.REG_MULTI_SZ ? " /s " + seperator : "") + " /d \"" + rawValue + "\" /f");
+		Registry.setDeafultValue(this.path, type, seperator, rawValue);
 	}
 	
 	/**
@@ -92,16 +146,16 @@ public final class Key {
 	 * @throws IOException if an error occurs
 	 * @since 1.0.0
 	 */
-	public void setValue(String name, Value.Type type, char seperator, String rawValue) throws IOException {
+	public final void setValue(String name, Value.Type type, char seperator, String rawValue) throws IOException {
 		
-		Registry.exec("reg add \"" + path + "\" /v " + name + " /t " + type.name() + (type == Value.Type.REG_MULTI_SZ ? " /s " + seperator : "") + " /d \"" + rawValue + "\" /f");
+		Registry.setValue(this.path, name, type, seperator, rawValue);
 	}
 	
 	/**
 	 * @return the default value
 	 * @since 1.0.0
 	 */
-	public Value getDefaultValue() {
+	public final Value getDefaultValue() {
 		
 		return this.defaultValue;
 	}
@@ -110,7 +164,7 @@ public final class Key {
 	 * @return this key's path
 	 * @since 1.0.0
 	 */
-	public String getPath() {
+	public final String getPath() {
 		
 		return this.path;
 	}
@@ -119,7 +173,7 @@ public final class Key {
 	 * @return the name of this key
 	 * @since 1.0.0
 	 */
-	public String getName() {
+	public final String getName() {
 		
 		return this.name;
 	}
@@ -130,7 +184,7 @@ public final class Key {
 	 * @throws IOException if an error occurs
 	 * @since 1.0.0
 	 */
-	public Key getChild(String name) throws IOException {
+	public final Key getChild(String name) throws IOException {
 
 		for(String child : this.childs) {
 			
@@ -150,7 +204,7 @@ public final class Key {
 	 * @throws IOException if an error occurs
 	 * @since 1.0.0
 	 */
-	public List<Key> getChilds() throws IOException {
+	public final List<Key> getChilds() throws IOException {
 		
 		List<Key> list = new ArrayList<Key>();
 		
@@ -167,7 +221,7 @@ public final class Key {
 	 * @throws IOException if an error occurs
 	 * @since 1.0.0
 	 */
-	public Key getParent() throws IOException {
+	public final Key getParent() throws IOException {
 		
 		return Registry.getKey(this.parent);
 	}
@@ -176,7 +230,7 @@ public final class Key {
 	 * @return all values of this key
 	 * @since 1.0.0
 	 */
-	public List<Value> getValues() {
+	public final List<Value> getValues() {
 		
 		return Key.clone(this.values);
 	}
@@ -186,7 +240,7 @@ public final class Key {
 	 * @return the value if the specified name, or {@code null} if no value was found; case insensitive
 	 * @since 1.0.0
 	 */
-	public Value getValueByName(String name) {
+	public final Value getValueByName(String name) {
 		
 		for(Value value : values) {
 			
@@ -200,7 +254,7 @@ public final class Key {
 	}
 	
 	@Override
-	public String toString() {
+	public final String toString() {
 		
 		StringBuilder builder = new StringBuilder();
 		builder.append("path=").append(this.path).append(';');

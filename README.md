@@ -39,6 +39,20 @@ public static void main(String[] args) {
 }
 ```
 
+# Changelog
+
+## Version 1.1.0
+
+	- Added more methods for direct access in the Registry.java
+	- Added the possibility to remove values (forgot that in the last release)
+	- Added the possibility to export and import keys
+	- Added the possibility to reload values
+
+## Version 1.0.0
+
+	- Release
+
 # Links
-See the [download page]()
-See the [online documentation]()
+See the [download page](https://github.com/RalleYTN/SimpleRegistry/releases)    
+See the [changelog](https://github.com/RalleYTN/SimpleRegistry/blob/master/CHANGELOG.md)    
+See the [online documentation](https://ralleytn.github.io/SimpleRegistry/)

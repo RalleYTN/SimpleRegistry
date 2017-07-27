@@ -34,22 +34,36 @@ import java.util.regex.Pattern;
 /**
  * Represents a value of a registry key.
  * @author Ralph Niemitz/RalleYTN(ralph.niemitz@gmx.de)
- * @version 1.0.0
+ * @version 1.1.0
  * @since 1.0.0
  */
-public final class Value {
+public final class Value implements Reloadable {
 
-	private final String name;
-	private final Type type;
-	private final String rawValue;
-	private final Object value;
+	private String name;
+	private String path;
+	private Type type;
+	private String rawValue;
+	private Object value;
 	
-	Value(String name, Type type, String rawValue) {
+	Value(String name, Type type, String rawValue, String path) {
 		
 		this.name = name;
 		this.type = type;
 		this.rawValue = rawValue;
 		this.value = type.parseValue(rawValue);
+		this.path = path;
+	}
+	
+	@Override
+	public final void reload() throws IOException {
+		
+		Value value = Registry.getValue(this.path, this.name);
+		
+		this.name = value.name;
+		this.path = value.path;
+		this.type = value.type;
+		this.rawValue = value.rawValue;
+		this.value = value;
 	}
 	
 	/**
@@ -80,6 +94,16 @@ public final class Value {
 	}
 	
 	/**
+	 * @return the registry key to which this value belongs
+	 * @throws IOException if an error occurs
+	 * @since 1.1.0
+	 */
+	public final Key getKey() throws IOException {
+		
+		return Registry.getKey(this.path);
+	}
+	
+	/**
 	 * <ul>
 	 * <li>REG_BINARY = byte[]</li>
 	 * <li>REG_DWORD = int</li>
@@ -99,7 +123,7 @@ public final class Value {
 	}
 	
 	@Override
-	public String toString() {
+	public final String toString() {
 		
 		StringBuilder builder = new StringBuilder();
 		builder.append(this.name);
@@ -126,7 +150,7 @@ public final class Value {
 		REG_BINARY {
 
 			@Override
-			protected Object parseValue(String toParse) {
+			protected final Object parseValue(String toParse) {
 				
 				byte[] value = null;
 				
@@ -155,7 +179,7 @@ public final class Value {
 		REG_DWORD {
 
 			@Override
-			protected Object parseValue(String toParse) {
+			protected final Object parseValue(String toParse) {
 				
 				return Integer.parseInt(toParse.substring(2), 16);
 			}
@@ -168,7 +192,7 @@ public final class Value {
 		REG_QWORD {
 
 			@Override
-			protected Object parseValue(String toParse) {
+			protected final Object parseValue(String toParse) {
 				
 				return Long.parseLong(toParse.substring(2), 16);
 			}
@@ -181,7 +205,7 @@ public final class Value {
 		REG_SZ {
 			
 			@Override
-			protected Object parseValue(String toParse) {
+			protected final Object parseValue(String toParse) {
 				
 				return toParse;
 			}
@@ -194,7 +218,7 @@ public final class Value {
 		REG_EXPAND_SZ {
 			
 			@Override
-			protected Object parseValue(String toParse) {
+			protected final Object parseValue(String toParse) {
 				
 				String value = toParse;
 
@@ -214,7 +238,7 @@ public final class Value {
 		REG_MULTI_SZ {
 			
 			@Override
-			protected Object parseValue(String toParse) {
+			protected final Object parseValue(String toParse) {
 				
 				List<String> value = new ArrayList<>();
 				
@@ -239,7 +263,7 @@ public final class Value {
 		REG_FULL_RESOURCE_DESCRIPTOR {
 			
 			@Override
-			protected Object parseValue(String toParse) {
+			protected final Object parseValue(String toParse) {
 				
 				return toParse;
 			}
@@ -252,7 +276,7 @@ public final class Value {
 		REG_NONE {
 			
 			@Override
-			protected Object parseValue(String toParse) {
+			protected final Object parseValue(String toParse) {
 				
 				return toParse;
 			}
