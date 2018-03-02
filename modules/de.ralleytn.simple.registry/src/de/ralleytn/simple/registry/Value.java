@@ -21,7 +21,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
 package de.ralleytn.simple.registry;
 
 import java.io.ByteArrayOutputStream;
@@ -34,7 +33,7 @@ import java.util.regex.Pattern;
 /**
  * Represents a value of a registry key.
  * @author Ralph Niemitz/RalleYTN(ralph.niemitz@gmx.de)
- * @version 1.1.0
+ * @version 2.0.0
  * @since 1.0.0
  */
 public final class Value implements Reloadable {
@@ -138,7 +137,7 @@ public final class Value implements Reloadable {
 	/**
 	 * Represents the data type of a value in a registry key.
 	 * @author Ralph Niemitz/RalleYTN(ralph.niemitz@gmx.de)
-	 * @version 1.0.0
+	 * @version 2.0.0
 	 * @since 1.0.0
 	 */
 	public static enum Type {
@@ -202,14 +201,7 @@ public final class Value implements Reloadable {
 		 * String
 		 * @since 1.0.0
 		 */
-		REG_SZ {
-			
-			@Override
-			protected final Object parseValue(String toParse) {
-				
-				return toParse;
-			}
-		},
+		REG_SZ,
 		
 		/**
 		 * String
@@ -260,29 +252,24 @@ public final class Value implements Reloadable {
 		 * String
 		 * @since 1.0.0
 		 */
-		REG_FULL_RESOURCE_DESCRIPTOR {
-			
-			@Override
-			protected final Object parseValue(String toParse) {
-				
-				return toParse;
-			}
-		},
+		REG_FULL_RESOURCE_DESCRIPTOR,
 		
 		/**
 		 * String
 		 * @since 1.0.0
 		 */
-		REG_NONE {
-			
-			@Override
-			protected final Object parseValue(String toParse) {
-				
-				return toParse;
-			}
-		};
+		REG_NONE;
 		
-		protected abstract Object parseValue(String toParse);
+		/**
+		 * Parses a registry value based on the implementing type and returns the result.
+		 * @param toParse the value that should be parsed
+		 * @return the result
+		 * @since 1.0.0
+		 */
+		protected Object parseValue(String toParse) {
+			
+			return toParse;
+		}
 		
 		/**
 		 * @param name data type name

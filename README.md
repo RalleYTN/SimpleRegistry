@@ -1,14 +1,27 @@
 # Description
+
 SimpleRegistry is pure Java library that grants you read and write access to the Windows registry.
 
-# Requirements
+## Requirements
+
 - Java 8 or later
 - Windows Vista or later (XP and older systems are not supported)
 
-# Setup
-Just put the Java archive on your build path.
+## Setup
 
-# Example
+### Java 9 and higher
+
+- Put the JAR on your module path
+- Make your module require `de.ralleytn.simple.registry`
+- Start coding
+
+### Java 8 and lower
+
+- Put the JAR on your class path
+- Start coding
+
+## Example
+
 ```java
 public static void main(String[] args) {
 
@@ -39,20 +52,8 @@ public static void main(String[] args) {
 }
 ```
 
-# Changelog
+## Links
 
-## Version 1.1.0
-
-	- Added more methods for direct access in the Registry.java
-	- Added the possibility to remove values (forgot that in the last release)
-	- Added the possibility to export and import keys
-	- Added the possibility to reload values
-
-## Version 1.0.0
-
-	- Release
-
-# Links
-See the [download page](https://github.com/RalleYTN/SimpleRegistry/releases)    
-See the [changelog](https://github.com/RalleYTN/SimpleRegistry/blob/master/CHANGELOG.md)    
-See the [online documentation](https://ralleytn.github.io/SimpleRegistry/)
+[Download](https://github.com/RalleYTN/SimpleRegistry/releases)    
+[Changelog](https://github.com/RalleYTN/SimpleRegistry/blob/master/CHANGELOG.md)    
+[Online Documentation](https://ralleytn.github.io/SimpleRegistry/)
