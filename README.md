@@ -1,59 +1,92 @@
+![Build Result](https://api.travis-ci.org/RalleYTN/SimpleRegistry.svg?branch=master)
+
 # Description
 
 SimpleRegistry is pure Java library that grants you read and write access to the Windows registry.
+This is done by calling the "reg" console commands through Java.
+This method is not the fastest but it gets the job done without any DLLs on the library path.
+Windows XP and older versions of Windows are not supported by this library.
+Tests show that it definitely works from Windows Vista to Windows 10.
 
-## Requirements
-
-- Java 8 or later
-- Windows Vista or later (XP and older systems are not supported)
-
-## Setup
-
-### Java 9 and higher
-
-- Put the JAR on your module path
-- Make your module require `de.ralleytn.simple.registry`
-- Start coding
-
-### Java 8 and lower
-
-- Put the JAR on your class path
-- Start coding
-
-## Example
+### Code example
 
 ```java
-public static void main(String[] args) {
+try {
+	
+	// Creating Keys
+	Registry.setKey(Registry.HKEY_CURRENT_USER + "\\Software\\MyExampleSoftware");
+	Key mySoftwareKey = Registry.getKey(Registry.HKEY_CURRENT_USER + "\\Software\\MyExampleSoftware");
+	mySoftwareKey.setValue("myExampleValue", Value.Type.REG_SZ, '\0', "Hello World!");
+	mySoftwareKey.reload();
+	System.out.println(mySoftwareKey.getValueByName("myExampleValue"));
 
-	try {
+	// Reading keys
+	Key key = Registry.getKey(Registry.HKEY_CURRENT_USER + "\\Software");
 	
-		// Creating Keys
-		Registry.setKey(Registry.HKEY_CURRENT_USER + "\\Software\\MyExampleSoftware");
-		Key mySoftwareKey = Registry.getKey(Registry.HKEY_CURRENT_USER + "\\Software\\MyExampleSoftware");
-		mySoftwareKey.setValue("myExampleValue", Value.Type.REG_SZ, '\0', "Hello World!");
-		mySoftwareKey.reload();
-		System.out.println(mySoftwareKey.getValueByName("myExampleValue"));
-
-		// Reading keys
-		Key key = Registry.getKey(Registry.HKEY_CURRENT_USER + "\\Software");
+	for(Key child : key.getChilds()) {
 	
-		for(Key child : key.getChilds()) {
-	
-			System.out.println(child.getName());
-		}
-	
-		// Removing Keys
-		Registry.deleteKey(mySoftwareKey.getPath());
-	
-	} catch(IOException exception) {
-	
-		exception.printStackTrace();
+		System.out.println(child.getName());
 	}
+	
+	// Removing Keys
+	Registry.deleteKey(mySoftwareKey.getPath());
+	
+} catch(IOException exception) {
+	
+	exception.printStackTrace();
 }
+```
+
+## Changelog
+
+### Version 2.0.0 (incompatible with older versions of the library)
+
+- Renamed the `Key` and `Value` classes to `RegistryKey` and `RegistryValue`
+- Removed the `Reloadable` interface
+- Made the project modular for Java 9
+- Added Maven support
+- Added Unit-Tests
+- Added some more documentation
+
+### Version 1.1.0
+
+- Added more methods for direct access in the Registry.java
+- Added the possibility to remove values (forgot that in the last release)
+- Added the possibility to export and import keys
+- Added the possibility to reload values
+
+### Version 1.0.0
+
+- Release
+
+## License
+
+```
+MIT License
+
+Copyright (c) 2017 Ralph Niemitz
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
 ```
 
 ## Links
 
-[Download](https://github.com/RalleYTN/SimpleRegistry/releases)    
-[Changelog](https://github.com/RalleYTN/SimpleRegistry/blob/master/CHANGELOG.md)    
-[Online Documentation](https://ralleytn.github.io/SimpleRegistry/)
+- [Download](https://github.com/RalleYTN/SimpleRegistry/releases)
+- [Online Documentation](https://ralleytn.github.io/SimpleRegistry/)
+- [Java 8 Compatible Version](https://github.com/RalleYTN/SimpleRegistry/tree/java8)

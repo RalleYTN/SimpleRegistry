@@ -36,7 +36,7 @@ import java.util.regex.Pattern;
  * @version 2.0.0
  * @since 1.0.0
  */
-public final class Value implements Reloadable {
+public final class RegistryValue {
 
 	private String name;
 	private String path;
@@ -44,7 +44,7 @@ public final class Value implements Reloadable {
 	private String rawValue;
 	private Object value;
 	
-	Value(String name, Type type, String rawValue, String path) {
+	RegistryValue(String name, Type type, String rawValue, String path) {
 		
 		this.name = name;
 		this.type = type;
@@ -53,10 +53,14 @@ public final class Value implements Reloadable {
 		this.path = path;
 	}
 	
-	@Override
+	/**
+	 * Reloads the value.
+	 * @throws IOException if an error occurred while reloading the value
+	 * @since 1.0.0
+	 */
 	public final void reload() throws IOException {
 		
-		Value value = Registry.getValue(this.path, this.name);
+		RegistryValue value = Registry.getValue(this.path, this.name);
 		
 		this.name = value.name;
 		this.path = value.path;
@@ -93,11 +97,20 @@ public final class Value implements Reloadable {
 	}
 	
 	/**
+	 * @return the path of this value
+	 * @since 2.0.0
+	 */
+	public final String getPath() {
+		
+		return this.path;
+	}
+	
+	/**
 	 * @return the registry key to which this value belongs
 	 * @throws IOException if an error occurs
 	 * @since 1.1.0
 	 */
-	public final Key getKey() throws IOException {
+	public final RegistryKey getKey() throws IOException {
 		
 		return Registry.getKey(this.path);
 	}

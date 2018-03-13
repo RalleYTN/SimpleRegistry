@@ -1,0 +1,11 @@
+language: java
+sudo: false
+
+os:
+    - windows
+
+jdk:
+    - oraclejdk8
+
+scripts:
+    - mvn clean

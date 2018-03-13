@@ -21,7 +21,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
 package de.ralleytn.simple.registry;
 
 import java.io.BufferedReader;
@@ -88,28 +87,28 @@ public final class Registry {
 	 * @param path path of the key
 	 * @param name name of the value
 	 * @param type the data type
-	 * @param seperator only important when the data type is {@linkplain Value.Type#REG_MULTI_SZ}; specifies at which character the string should be split; some characters do not work as seperator and simply do nothing like '|' for instance
+	 * @param seperator only important when the data type is {@linkplain RegistryValue.Type#REG_MULTI_SZ}; specifies at which character the string should be split; some characters do not work as seperator and simply do nothing like '|' for instance
 	 * @param rawValue the value data
 	 * @throws IOException if an error occurs
 	 * @since 1.1.0
 	 */
-	public static final void setValue(String path, String name, Value.Type type, char seperator, String rawValue) throws IOException {
+	public static final void setValue(String path, String name, RegistryValue.Type type, char seperator, String rawValue) throws IOException {
 		
-		Registry.exec("reg add \"" + path + "\" /v " + name + " /t " + type.name() + (type == Value.Type.REG_MULTI_SZ ? " /s " + seperator : "") + " /d \"" + rawValue + "\" /f");
+		Registry.exec("reg add \"" + path + "\" /v " + name + " /t " + type.name() + (type == RegistryValue.Type.REG_MULTI_SZ ? " /s " + seperator : "") + " /d \"" + rawValue + "\" /f");
 	}
 	
 	/**
 	 * Sets the default value of a registry key.
 	 * @param path path of the key
 	 * @param type the data type
-	 * @param seperator only important when the data type is {@linkplain Value.Type#REG_MULTI_SZ}; specifies at which character the string should be split; some characters do not work as seperator and simply do nothing like '|' for instance
+	 * @param seperator only important when the data type is {@linkplain RegistryValue.Type#REG_MULTI_SZ}; specifies at which character the string should be split; some characters do not work as seperator and simply do nothing like '|' for instance
 	 * @param rawValue the value data
 	 * @throws IOException if an error occurs
 	 * @since 1.1.0
 	 */
-	public static final void setDeafultValue(String path, Value.Type type, char seperator, String rawValue) throws IOException {
+	public static final void setDeafultValue(String path, RegistryValue.Type type, char seperator, String rawValue) throws IOException {
 		
-		Registry.exec("reg add \"" + path + "\" /ve /t " + type.name() + (type == Value.Type.REG_MULTI_SZ ? " /s " + seperator : "") + " /d \"" + rawValue + "\" /f");
+		Registry.exec("reg add \"" + path + "\" /ve /t " + type.name() + (type == RegistryValue.Type.REG_MULTI_SZ ? " /s " + seperator : "") + " /d \"" + rawValue + "\" /f");
 	}
 
 	/**
@@ -119,16 +118,16 @@ public final class Registry {
 	 * @throws IOException if an error occurs
 	 * @since 1.1.0
 	 */
-	public static final Value getValue(String path, String name) throws IOException {
+	public static final RegistryValue getValue(String path, String name) throws IOException {
 		
 		String result = Registry.exec("reg query \"" + path + "\" /v " + name);
-		
+
 		for(String line : result.split("\n")) {
 			
 			if(line.startsWith(" >")) {
 				
 				String[] valueAttribs = line.substring(2).split("\\|");
-				return new Value(valueAttribs[0], Value.Type.getTypeByName(valueAttribs[1]), valueAttribs.length == 2 ? null : valueAttribs[2], path);
+				return new RegistryValue(valueAttribs[0], RegistryValue.Type.getTypeByName(valueAttribs[1]), valueAttribs.length == 2 ? null : valueAttribs[2], path);
 			}
 		}
 		
@@ -186,7 +185,7 @@ public final class Registry {
 	 * @throws IOException if an error occurs
 	 * @since 1.0.0
 	 */
-	public static final Key getKey(String path) throws IOException {
+	public static final RegistryKey getKey(String path) throws IOException {
 		
 		path = path.replace('/', '\\');
 		
@@ -231,8 +230,8 @@ public final class Registry {
 		if(result != null) {
 			
 			List<String> childs = new ArrayList<>();
-			List<Value> values = new ArrayList<>();
-			Value defaultValue = null;
+			List<RegistryValue> values = new ArrayList<>();
+			RegistryValue defaultValue = null;
 			
 			for(String line : result.split("\n")) {
 
@@ -240,7 +239,7 @@ public final class Registry {
 					
 					String[] valueAttribs = line.substring(2).split("\\|");
 					
-					values.add(new Value(valueAttribs[0], Value.Type.getTypeByName(valueAttribs[1]), valueAttribs.length == 2 ? null : valueAttribs[2], path));
+					values.add(new RegistryValue(valueAttribs[0], RegistryValue.Type.getTypeByName(valueAttribs[1]), valueAttribs.length == 2 ? null : valueAttribs[2], path));
 					
 				} else if(!line.equals(path)){
 					
@@ -255,11 +254,11 @@ public final class Registry {
 				if(line.startsWith(" >")) {
 						
 					String[] valueAttribs = line.substring(2).split("\\|");
-					defaultValue = new Value(valueAttribs[0], Value.Type.getTypeByName(valueAttribs[1]), valueAttribs.length == 2 ? null : valueAttribs[2], path);
+					defaultValue = new RegistryValue(valueAttribs[0], RegistryValue.Type.getTypeByName(valueAttribs[1]), valueAttribs.length == 2 ? null : valueAttribs[2], path);
 				}
 			}
 			
-			return new Key(path, name, values, defaultValue, parent, childs);
+			return new RegistryKey(path, name, values, defaultValue, parent, childs);
 		}
 		
 		return null;

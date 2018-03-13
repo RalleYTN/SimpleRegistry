@@ -21,7 +21,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
 package de.ralleytn.simple.registry;
 
 import java.io.File;
@@ -32,19 +31,19 @@ import java.util.List;
 /**
  * Represents a key in the registry.
  * @author Ralph Niemitz/RalleYTN(ralph.niemitz@gmx.de)
- * @version 1.1.0
+ * @version 2.0.0
  * @since 1.0.0
  */
-public final class Key implements Reloadable {
+public final class RegistryKey {
 
 	private List<String> childs;
 	private String parent;
-	private List<Value> values;
-	private Value defaultValue;
+	private List<RegistryValue> values;
+	private RegistryValue defaultValue;
 	private String name;
 	private String path;
 	
-	Key(String path, String name, List<Value> values, Value defaultValue, String parent, List<String> childs) {
+	RegistryKey(String path, String name, List<RegistryValue> values, RegistryValue defaultValue, String parent, List<String> childs) {
 		
 		this.path = path;
 		this.name = name;
@@ -108,13 +107,12 @@ public final class Key implements Reloadable {
 	
 	/**
 	 * Reloads the key. Should be called after setting or deleting values.
-	 * @throws IOException if an error occurs
+	 * @throws IOException if an error occurs while reloading the key
 	 * @since 1.0.0
 	 */
-	@Override
 	public final void reload() throws IOException {
 		
-		Key key = Registry.getKey(this.path);
+		RegistryKey key = Registry.getKey(this.path);
 		
 		this.childs = key.childs;
 		this.parent = key.parent;
@@ -127,12 +125,12 @@ public final class Key implements Reloadable {
 	/**
 	 * Sets the default value.
 	 * @param type data type of value data
-	 * @param seperator only important when the data type is {@linkplain Value.Type#REG_MULTI_SZ}; specifies at which character the string should be split; some characters do not work as seperator and simply do nothing like '|' for instance
+	 * @param seperator only important when the data type is {@linkplain RegistryValue.Type#REG_MULTI_SZ}; specifies at which character the string should be split; some characters do not work as seperator and simply do nothing like '|' for instance
 	 * @param rawValue the raw value data
 	 * @throws IOException if an error occurs
 	 * @since 1.0.0
 	 */
-	public final void setDefaultValue(Value.Type type, char seperator, String rawValue) throws IOException {
+	public final void setDefaultValue(RegistryValue.Type type, char seperator, String rawValue) throws IOException {
 		
 		Registry.setDeafultValue(this.path, type, seperator, rawValue);
 	}
@@ -141,12 +139,12 @@ public final class Key implements Reloadable {
 	 * Sets a value.
 	 * @param name the value name
 	 * @param type data type of value data
-	 * @param seperator only important when the data type is {@linkplain Value.Type#REG_MULTI_SZ}; specifies at which character the string should be split; some characters do not work as seperator and simply do nothing like '|' for instance
+	 * @param seperator only important when the data type is {@linkplain RegistryValue.Type#REG_MULTI_SZ}; specifies at which character the string should be split; some characters do not work as seperator and simply do nothing like '|' for instance
 	 * @param rawValue the raw value data
 	 * @throws IOException if an error occurs
 	 * @since 1.0.0
 	 */
-	public final void setValue(String name, Value.Type type, char seperator, String rawValue) throws IOException {
+	public final void setValue(String name, RegistryValue.Type type, char seperator, String rawValue) throws IOException {
 		
 		Registry.setValue(this.path, name, type, seperator, rawValue);
 	}
@@ -155,7 +153,7 @@ public final class Key implements Reloadable {
 	 * @return the default value
 	 * @since 1.0.0
 	 */
-	public final Value getDefaultValue() {
+	public final RegistryValue getDefaultValue() {
 		
 		return this.defaultValue;
 	}
@@ -184,7 +182,7 @@ public final class Key implements Reloadable {
 	 * @throws IOException if an error occurs
 	 * @since 1.0.0
 	 */
-	public final Key getChild(String name) throws IOException {
+	public final RegistryKey getChild(String name) throws IOException {
 
 		for(String child : this.childs) {
 			
@@ -204,9 +202,9 @@ public final class Key implements Reloadable {
 	 * @throws IOException if an error occurs
 	 * @since 1.0.0
 	 */
-	public final List<Key> getChilds() throws IOException {
+	public final List<RegistryKey> getChilds() throws IOException {
 		
-		List<Key> list = new ArrayList<Key>();
+		List<RegistryKey> list = new ArrayList<RegistryKey>();
 		
 		for(String child : this.childs) {
 			
@@ -221,7 +219,7 @@ public final class Key implements Reloadable {
 	 * @throws IOException if an error occurs
 	 * @since 1.0.0
 	 */
-	public final Key getParent() throws IOException {
+	public final RegistryKey getParent() throws IOException {
 		
 		return Registry.getKey(this.parent);
 	}
@@ -230,9 +228,9 @@ public final class Key implements Reloadable {
 	 * @return all values of this key
 	 * @since 1.0.0
 	 */
-	public final List<Value> getValues() {
+	public final List<RegistryValue> getValues() {
 		
-		return Key.clone(this.values);
+		return RegistryKey.clone(this.values);
 	}
 	
 	/**
@@ -240,9 +238,9 @@ public final class Key implements Reloadable {
 	 * @return the value if the specified name, or {@code null} if no value was found; case insensitive
 	 * @since 1.0.0
 	 */
-	public final Value getValueByName(String name) {
+	public final RegistryValue getValueByName(String name) {
 		
-		for(Value value : values) {
+		for(RegistryValue value : values) {
 			
 			if(value.getName().toUpperCase().equals(name.toUpperCase())) {
 				
@@ -264,7 +262,7 @@ public final class Key implements Reloadable {
 		builder.append("values=[");
 		boolean first = true;
 		
-		for(Value value : this.values) {
+		for(RegistryValue value : this.values) {
 			
 			if(first) {
 				
@@ -303,8 +301,13 @@ public final class Key implements Reloadable {
 		
 		try {
 			
+			// ==== 13.03.2018 | Ralph Niemitz/RalleYTN(ralph.niemitz@gmx.de)
+			// -	getClass().newInstance() is deprecated since Java 9.
+			//		Use getClass().getDeclaredConstructor().newInstance() instead.
+			// ====
+			
 			@SuppressWarnings("unchecked")
-			List<T> clonedList = list.getClass().newInstance();
+			List<T> clonedList = list.getClass().getDeclaredConstructor().newInstance();
 			
 			for(T element : list) {
 				
