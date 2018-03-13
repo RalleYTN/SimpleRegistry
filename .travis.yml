@@ -6,6 +6,9 @@ os:
 
 jdk:
     - oraclejdk9
+    
+install:
+    - true
 
 scripts:
-    - mvn clean
+    - mvn clean package -DskipTests=true
