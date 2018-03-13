@@ -5,7 +5,7 @@ os:
     - windows
 
 jdk:
-    - oraclejdk8
+    - oraclejdk9
 
 scripts:
     - mvn clean

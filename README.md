@@ -47,6 +47,7 @@ try {
 - Added Maven support
 - Added Unit-Tests
 - Added some more documentation
+- Added the `getPath()` method to `RegistryValue`
 
 ### Version 1.1.0
 
