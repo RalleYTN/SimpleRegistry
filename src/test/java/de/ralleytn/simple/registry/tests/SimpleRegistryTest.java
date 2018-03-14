@@ -24,12 +24,15 @@
 package de.ralleytn.simple.registry.tests;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
@@ -38,16 +41,12 @@ import de.ralleytn.simple.registry.RegistryKey;
 import de.ralleytn.simple.registry.RegistryValue;
 import de.ralleytn.simple.registry.Registry;
 
-/**
- * Tests the {@linkplain Registry} class.
- * @author Ralph Niemitz/RalleYTN(ralph.niemitz@gmx.de)
- * @version 2.0.0
- * @since 2.0.0
- */
 class SimpleRegistryTest {
 
 	private static final String KEY_NAME = "MyExampleSoftware";
-	private static final String KEY = Registry.HKEY_CURRENT_USER + "\\Software\\" + KEY_NAME;
+	private static final String PARENT_NAME = "Software";
+	private static final String PARENT = Registry.HKEY_CURRENT_USER + "\\Software";
+	private static final String KEY = PARENT + "\\" + KEY_NAME;
 	private static final String CHILD1 = KEY + "\\Child1";
 	private static final String CHILD2 = KEY + "\\Child2";
 	private static final String CHILD3 = KEY + "\\Child3";
@@ -90,11 +89,7 @@ class SimpleRegistryTest {
 		
 		assertTrue(correct, "The key " + path + " still exists!");
 	}
-	
-	/**
-	 * Cleans up potential leftovers from tests.
-	 * @since 2.0.0
-	 */
+
 	@AfterAll
 	static void cleanUp() {
 		
@@ -105,6 +100,132 @@ class SimpleRegistryTest {
 		} catch(IOException exception) {}
 		
 		FILE.delete();
+	}
+	
+	@Test
+	void testDeleteValues() {
+		
+		try {
+			
+			// SETUP
+			setKey(KEY);
+			Registry.setValue(KEY, "MyValue", RegistryValue.Type.REG_SZ, '\0', "Hello World!");
+			Registry.setDeafultValue(KEY, RegistryValue.Type.REG_MULTI_SZ, '-', "A-B-C-D-E-F");
+			
+			// DO
+			RegistryKey key = Registry.getKey(KEY);
+			key.deleteDefaultValue();
+			key.deleteValue("MyValue");
+			key.reload();
+			RegistryValue value = key.getValueByName("MyValue");
+			
+			// TEST RESULT
+			assertNull(value);
+			
+			// SETUP
+			setKey(KEY);
+			Registry.setValue(KEY, "MyValue", RegistryValue.Type.REG_SZ, '\0', "Hello World!");
+			Registry.setDeafultValue(KEY, RegistryValue.Type.REG_MULTI_SZ, '-', "A-B-C-D-E-F");
+			
+			// DO
+			key.reload();
+			key.deleteAllValues();
+			key.reload();
+			value = key.getValueByName("MyValue");
+			
+			// TEST RESULT
+			assertNull(value);
+			
+		} catch(IOException exception) {
+			
+			fail(exception.getClass().getName() + ": " + exception.getMessage());
+		}
+	}
+	
+	@Test
+	void testExportAndImport() {
+		
+		try {
+			
+			// SETUP
+			setKey(KEY);
+			Registry.setValue(KEY, "MyValue", RegistryValue.Type.REG_SZ, '\0', "Hello World!");
+			Registry.setDeafultValue(KEY, RegistryValue.Type.REG_MULTI_SZ, '-', "A-B-C-D-E-F");
+			
+			// EXPORT
+			Registry.exportKey(KEY, FILE);
+			
+			// TEST RESULT
+			assertTrue(FILE.exists());
+			assertTrue(FILE.isFile());
+			assertTrue(FILE.canRead());
+			assertFalse(FILE.isDirectory());
+			assertFalse(FILE.isHidden());
+			
+			// SETUP
+			Registry.deleteKey(KEY);
+			
+			// IMPORT
+			Registry.importFile(FILE);
+			RegistryKey key = Registry.getKey(KEY);
+			RegistryValue value = key.getValueByName("MyValue");
+			
+			// TEST RESULT
+			assertNotNull(key);
+			assertEquals(KEY, key.getPath());
+			assertEquals(KEY_NAME, key.getName());
+			checkValue(value, "Hello World!", "Hello World!", RegistryValue.Type.REG_SZ, KEY, "MyValue");
+			
+		} catch(IOException exception) {
+			
+			fail(exception.getClass().getName() + ": " + exception.getMessage());
+		}
+	}
+	
+	@Test
+	void testKeyGetters() {
+		
+		try {
+			
+			// SETUP
+			setKey(KEY);
+			setKey(CHILD1);
+			setKey(CHILD2);
+			Registry.setValue(KEY, "MyValue", RegistryValue.Type.REG_SZ, '\0', "Hello World!");
+			Registry.setDeafultValue(KEY, RegistryValue.Type.REG_MULTI_SZ, '-', "A-B-C-D-E-F");
+			String childName = CHILD1.substring(CHILD1.lastIndexOf('\\') + 1);
+			
+			// DO
+			RegistryKey key = Registry.getKey(KEY);
+			RegistryKey child = key.getChild(childName);
+			List<RegistryKey> childs = key.getChilds();
+			RegistryKey parent = key.getParent();
+			List<RegistryValue> values = key.getValues();
+			RegistryValue value = key.getValueByName("MyValue");
+			RegistryValue defaultVal = key.getDefaultValue();
+			
+			// TEST RESULT
+			assertNotNull(child);
+			assertEquals(CHILD1, child.getPath());
+			assertEquals(childName, child.getName());
+			assertNotNull(childs);
+			assertEquals(2, childs.size());
+			assertNotNull(parent);
+			assertEquals(PARENT, parent.getPath());
+			assertEquals(PARENT_NAME, parent.getName());
+			checkValue(value, "Hello World!", "Hello World!", RegistryValue.Type.REG_SZ, KEY, "MyValue");
+			assertNotNull(values);
+			assertEquals(2, values.size());
+			assertNotNull(defaultVal);
+			assertEquals(KEY, defaultVal.getPath());
+			assertEquals("A\\0B\\0C\\0D\\0E\\0F", defaultVal.getRawValue());
+			assertTrue(defaultVal.getValue() instanceof List);
+			assertEquals(RegistryValue.Type.REG_MULTI_SZ, defaultVal.getType());
+			
+		} catch(IOException exception) {
+			
+			fail(exception.getClass().getName() + ": " + exception.getMessage());
+		}
 	}
 	
 	@Test
@@ -165,10 +286,6 @@ class SimpleRegistryTest {
 		}
 	}
 
-	/**
-	 * Tests the {@link Registry#setKey(String)} method.
-	 * @since 2.0.0
-	 */
 	@Test
 	void testSetKey() {
 		

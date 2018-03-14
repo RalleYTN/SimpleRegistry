@@ -15,15 +15,15 @@ try {
 	
 	// Creating Keys
 	Registry.setKey(Registry.HKEY_CURRENT_USER + "\\Software\\MyExampleSoftware");
-	Key mySoftwareKey = Registry.getKey(Registry.HKEY_CURRENT_USER + "\\Software\\MyExampleSoftware");
-	mySoftwareKey.setValue("myExampleValue", Value.Type.REG_SZ, '\0', "Hello World!");
+	RegistryKey mySoftwareKey = Registry.getKey(Registry.HKEY_CURRENT_USER + "\\Software\\MyExampleSoftware");
+	mySoftwareKey.setValue("myExampleValue", RegistryValue.Type.REG_SZ, '\0', "Hello World!");
 	mySoftwareKey.reload();
 	System.out.println(mySoftwareKey.getValueByName("myExampleValue"));
 
 	// Reading keys
-	Key key = Registry.getKey(Registry.HKEY_CURRENT_USER + "\\Software");
+	RegstryKey key = Registry.getKey(Registry.HKEY_CURRENT_USER + "\\Software");
 	
-	for(Key child : key.getChilds()) {
+	for(RegistryKey child : key.getChilds()) {
 	
 		System.out.println(child.getName());
 	}

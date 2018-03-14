@@ -88,6 +88,7 @@ public final class RegistryValue {
 	}
 	
 	/**
+	 * In case of {@link RegistryValue.Type#REG_MULTI_SZ} you have to replace the character that you defined as separator with {@code "\\0"}.
 	 * @return raw value data
 	 * @since 1.0.0
 	 */
@@ -246,8 +247,8 @@ public final class RegistryValue {
 			protected final Object parseValue(String toParse) {
 				
 				List<String> value = new ArrayList<>();
-				
-				for(String string : toParse.split("\0")) {
+
+				for(String string : toParse.split("\\\\0")) {
 					
 					if(string.isEmpty()) {
 						
