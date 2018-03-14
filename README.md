@@ -48,6 +48,7 @@ try {
 - Added Unit-Tests
 - Added some more documentation
 - Added the `getPath()` method to `RegistryValue`
+- Fixed a bug that would give a wrong value through the `RegistryValue.getValue()` method if the type is `REG_MULTI_SZ`
 
 ### Version 1.1.0
 
