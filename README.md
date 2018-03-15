@@ -1,4 +1,5 @@
-![Build Result](https://api.travis-ci.org/RalleYTN/SimpleRegistry.svg?branch=master)
+[![Build Result](https://api.travis-ci.org/RalleYTN/SimpleRegistry.svg?branch=master)](https://travis-ci.org/RalleYTN/SimpleRegistry)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/80b62e23b20d4f729e13744a4406f847)](https://www.codacy.com/app/ralph.niemitz/SimpleRegistry?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=RalleYTN/SimpleRegistry&amp;utm_campaign=Badge_Grade)
 
 # Description
 
