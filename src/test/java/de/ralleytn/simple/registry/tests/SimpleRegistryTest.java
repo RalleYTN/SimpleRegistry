@@ -91,7 +91,7 @@ class SimpleRegistryTest {
 	}
 
 	@AfterAll
-	static void cleanUp() {
+	public static void cleanUp() {
 		
 		try {
 			
@@ -103,7 +103,7 @@ class SimpleRegistryTest {
 	}
 	
 	@Test
-	void testDeleteValues() {
+	public void testDeleteValues() {
 		
 		try {
 			
@@ -143,7 +143,7 @@ class SimpleRegistryTest {
 	}
 	
 	@Test
-	void testExportAndImport() {
+	public void testExportAndImport() {
 		
 		try {
 			
@@ -183,7 +183,7 @@ class SimpleRegistryTest {
 	}
 	
 	@Test
-	void testKeyGetters() {
+	public void testKeyGetters() {
 		
 		try {
 			
@@ -229,7 +229,7 @@ class SimpleRegistryTest {
 	}
 	
 	@Test
-	void testDeleteKey() {
+	public void testDeleteKey() {
 		
 		// Test with the static methods of the Registry class
 		try {
@@ -287,7 +287,7 @@ class SimpleRegistryTest {
 	}
 
 	@Test
-	void testSetKey() {
+	public void testSetKey() {
 		
 		try {
 			

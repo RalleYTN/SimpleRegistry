@@ -188,7 +188,7 @@ public final class RegistryKey {
 			
 			String[] parts = child.split("\\\\");
 			
-			if(parts[parts.length - 1].toUpperCase().equals(name.toUpperCase())) {
+			if(parts[parts.length - 1].equalsIgnoreCase(name)) {
 				
 				return Registry.getKey(child);
 			}
@@ -242,7 +242,7 @@ public final class RegistryKey {
 		
 		for(RegistryValue value : values) {
 			
-			if(value.getName().toUpperCase().equals(name.toUpperCase())) {
+			if(value.getName().equalsIgnoreCase(name)) {
 				
 				return value;
 			}
@@ -290,7 +290,7 @@ public final class RegistryKey {
 				builder.append(',');
 			}
 			
-			builder.append(child.toString());
+			builder.append(child);
 		}
 		
 		builder.append("]");

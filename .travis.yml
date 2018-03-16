@@ -8,4 +8,4 @@ jdk:
     - oraclejdk9
     
 scripts:
-    - mvn clean
+    - mvn clean install -Ptravis

@@ -187,19 +187,19 @@ public final class Registry {
 	 */
 	public static final RegistryKey getKey(String path) throws IOException {
 		
-		path = path.replace('/', '\\');
+		String realPath = path.replace('/', '\\');
 		
-		if(path.endsWith("\\")) {
+		if(realPath.endsWith("\\")) {
 			
-			path = path.substring(0, path.length() - 1);
+			realPath = realPath.substring(0, realPath.length() - 1);
 		}
 		
 		String name = null;
 		String parent = null;
 		
-		if(path.contains("\\")) {
+		if(realPath.contains("\\")) {
 			
-			String[] parts = path.split("\\\\");
+			String[] parts = realPath.split("\\\\");
 			name = parts[parts.length - 1];
 			
 			StringBuilder parentPathBuilder = new StringBuilder();
@@ -222,10 +222,15 @@ public final class Registry {
 			
 		} else {
 			
-			name = path;
+			name = realPath;
 		}
 		
-		String result = Registry.exec("reg query \"" + path + "\"");
+		return Registry.getKey(realPath, parent, name);
+	}
+	
+	private static final RegistryKey getKey(String realPath, String parent, String name) throws IOException {
+	
+		String result = Registry.exec("reg query \"" + realPath + "\"");
 		
 		if(result != null) {
 			
@@ -239,26 +244,26 @@ public final class Registry {
 					
 					String[] valueAttribs = line.substring(2).split("\\|");
 					
-					values.add(new RegistryValue(valueAttribs[0], RegistryValue.Type.getTypeByName(valueAttribs[1]), valueAttribs.length == 2 ? null : valueAttribs[2], path));
+					values.add(new RegistryValue(valueAttribs[0], RegistryValue.Type.getTypeByName(valueAttribs[1]), valueAttribs.length == 2 ? null : valueAttribs[2], realPath));
 					
-				} else if(!line.equals(path)){
+				} else if(!line.equals(realPath)){
 					
 					childs.add(line);
 				}
 			}
 			
-			result = Registry.exec("reg query \"" + path + "\" /ve");
+			result = Registry.exec("reg query \"" + realPath + "\" /ve");
 				
 			for(String line : result.split("\n")) {
 					
 				if(line.startsWith(" >")) {
 						
 					String[] valueAttribs = line.substring(2).split("\\|");
-					defaultValue = new RegistryValue(valueAttribs[0], RegistryValue.Type.getTypeByName(valueAttribs[1]), valueAttribs.length == 2 ? null : valueAttribs[2], path);
+					defaultValue = new RegistryValue(valueAttribs[0], RegistryValue.Type.getTypeByName(valueAttribs[1]), valueAttribs.length == 2 ? null : valueAttribs[2], realPath);
 				}
 			}
 			
-			return new RegistryKey(path, name, values, defaultValue, parent, childs);
+			return new RegistryKey(realPath, name, values, defaultValue, parent, childs);
 		}
 		
 		return null;
