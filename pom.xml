@@ -13,7 +13,7 @@
               <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.19.1</version>
+                <version>2.21.0</version>
                 <configuration>
                   <excludes>
                     <exclude>**/SimpleRegistryTest.java</exclude>
@@ -63,7 +63,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
         		<artifactId>maven-surefire-plugin</artifactId>
-        		<version>2.19.1</version>
+        		<version>2.21.0</version>
 				<excludes>
                     <exclude>**/SimpleRegistryTest.java</exclude>
                  </excludes>
