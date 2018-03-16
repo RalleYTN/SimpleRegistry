@@ -5,25 +5,25 @@
 	<artifactId>SimpleRegistry</artifactId>
 	<version>2.0.0</version>
 	<name>SimpleRegistry</name>
-	<profiles>
-    <profile>
-        <id>travis</id>
-        <build>
-            <plugins>
-              <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.21.0</version>
-                <configuration>
-                  <excludes>
-                    <exclude>**/SimpleRegistryTest.java</exclude>
-                  </excludes>
-                </configuration>
-              </plugin>
-            </plugins>
-        </build>
-    </profile>
-	</profiles>
+	<!-- <profiles>
+		<profile>
+			<id>travis</id>
+			<build>
+				<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-surefire-plugin</artifactId>
+					<version>2.21.0</version>
+					<configuration>
+					<excludes>
+						<exclude>**/SimpleRegistryTest.java</exclude>
+					</excludes>
+					</configuration>
+				</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles> -->
 	<properties>
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
       <maven.compiler.target>1.9</maven.compiler.target>
@@ -60,7 +60,7 @@
 					<showDeprecation>true</showDeprecation>
 				</configuration>
 			</plugin>
-			<plugin>
+			<!-- <plugin>
 				<groupId>org.apache.maven.plugins</groupId>
         		<artifactId>maven-surefire-plugin</artifactId>
         		<version>2.21.0</version>
@@ -74,7 +74,7 @@
                 		<version>1.1.0</version>
             		</dependency>
         		</dependencies>
-    		</plugin>
+    		</plugin> -->
 		</plugins>
 	</build>
     <dependencies>
