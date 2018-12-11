@@ -41,7 +41,7 @@ public final class Registry {
 
 	/** @since 1.0.0 */ public static final String HKEY_CLASSES_ROOT = "HKEY_CLASSES_ROOT";
 	/** @since 1.0.0 */ public static final String HKEY_CURRENT_USER = "HKEY_CURRENT_USER";
-	/** @since 1.0.0 */ public static final String HKEY_LOCAL_MASHINE = "HKEY_LOCAL_MASHINE";
+	/** @since 1.0.0 */ public static final String HKEY_LOCAL_MACHINE = "HKEY_LOCAL_MACHINE";
 	/** @since 1.0.0 */ public static final String HKEY_USERS = "HKEY_USERS";
 	/** @since 1.0.0 */ public static final String HKEY_CURRENT_CONFIG = "HKEY_CURRENT_CONFIG";
 	/** @since 1.0.0 */ public static final String HKEY_DYN_DATA = "HKEY_DYN_DATA";
